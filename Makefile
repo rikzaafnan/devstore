@@ -30,6 +30,10 @@ environment: ## Setup environment.
 environment:
 	docker compose -f ${DOCKER_COMPOSE_FILE} up -d
 
+environment-down: ## Setup environment to down server db.
+environment-down:
+	docker compose -f ${DOCKER_COMPOSE_FILE} down
+
 server: ## Running application
 server:
 	go run cmd/main.go
