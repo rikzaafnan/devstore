@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS order_payments;
+DROP TYPE IF EXISTS stat;
