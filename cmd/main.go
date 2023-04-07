@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -47,28 +46,20 @@ func main() {
 	})
 
 	// endpoint
-	// create articles
-	r.POST("/categories", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{"message": "create categories"})
-	})
 
 	categoryRepository := repository.NewCategoryRepository(DBConn)
 	categoryService := service.NewCategoryService(*categoryRepository)
 	categoryController := controller.NewCategoryController(categoryService)
 	// get list artcles
 	r.GET("/categories", categoryController.BrowseCategory)
+	// create articles
+	r.POST("/categories", categoryController.CreateCategory)
 	// get detail artcles
-	r.GET("/categories/:categoryID", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{"message": "create categories"})
-	})
+	r.GET("/categories/:categoryID", categoryController.DetailCategory)
 	// update artcles
-	r.PUT("/categories", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{"message": "create categories"})
-	})
+	r.PUT("/categories/:categoryID", categoryController.UpdateCategory)
 	// delete detail artcles
-	r.DELETE("/categories", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{"message": "create categories"})
-	})
+	r.DELETE("/categories/:categoryID", categoryController.DeleteCategory)
 
 	appPort := fmt.Sprintf(":%s", cfg.ServerPort)
 	r.Run(appPort)
