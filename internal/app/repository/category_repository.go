@@ -2,10 +2,10 @@ package repository
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/rikzaafnan/devstore/internal/app/model"
+	log "github.com/sirupsen/logrus"
 )
 
 type CategoryRepository struct {
@@ -42,6 +42,8 @@ func (cr *CategoryRepository) Browse() ([]model.Category, error) {
 	rows, err := cr.DB.Queryx(sqlStatement)
 	if err != nil {
 		log.Println(fmt.Errorf("error CategoryRepository - Browse : %s", err))
+		log.Error(fmt.Errorf("error CategoryRepository - Browse : %s", err))
+
 		return categories, err
 	}
 

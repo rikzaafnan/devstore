@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -11,6 +10,8 @@ import (
 	"github.com/rikzaafnan/devstore/internal/app/service"
 	"github.com/rikzaafnan/devstore/internal/pkg/config"
 	"github.com/rikzaafnan/devstore/internal/pkg/db"
+	"github.com/rikzaafnan/devstore/internal/pkg/middleware"
+	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -34,11 +35,23 @@ func init() {
 	}
 
 	DBConn = db
+
+	// setup logrus
+	logLevel, err := log.ParseLevel("debug")
+	if err != nil {
+		logLevel = log.InfoLevel
+	}
+
+	log.SetLevel(logLevel)
+	log.SetFormatter(&log.JSONFormatter{})
+
 }
 
 func main() {
 
-	r := gin.Default()
+	// r := gin.Default()
+	r := gin.New()
+	r.Use(middleware.LoggingMiddleware(), middleware.RecoveryMiddleware())
 	r.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
 			"message": "pinng",
@@ -46,7 +59,6 @@ func main() {
 	})
 
 	// endpoint
-
 	categoryRepository := repository.NewCategoryRepository(DBConn)
 	categoryService := service.NewCategoryService(*categoryRepository)
 	categoryController := controller.NewCategoryController(categoryService)
